@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction History - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="history-container">
+    <div class="history-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2><i class="bi bi-clock-history"></i> Prediction History</h2>
+                <p class="text-muted">View all your past placement predictions</p>
+            </div>
+            {% if predictions %}
+            <a href="{{ url_for('export_report') }}" class="btn btn-export">
+                <i class="bi bi-download"></i> Export Report
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if predictions %}
+    <div class="history-stats">
+        <div class="row">
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-box total">
+                    <i class="bi bi-calculator"></i>
+                    <span class="stat-number">{{ predictions|length }}</span>
+                    <span class="stat-text">Total Predictions</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-box placed">
+                    <i class="bi bi-check-circle"></i>
+                    <span class="stat-number">{{ predictions|selectattr('result', 'equalto', 'Placed')|list|length }}</span>
+                    <span class="stat-text">Placed</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-box not-placed">
+                    <i class="bi bi-x-circle"></i>
+                    <span class="stat-number">{{ predictions|selectattr('result', 'equalto', 'Not Placed')|list|length }}</span>
+                    <span class="stat-text">Not Placed</span>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-box avg">
+                    <i class="bi bi-percent"></i>
+                    {% set total_prob = predictions|map(attribute='probability')|sum %}
+                    <span class="stat-number">{{ (total_prob / predictions|length)|round(1) }}%</span>
+                    <span class="stat-text">Avg Probability</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="history-table-card">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date & Time</th>
+                        <th>Academic Scores</th>
+                        <th>Work Experience</th>
+                        <th>Result</th>
+                        <th>Probability</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pred in predictions %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>
+                            <div class="date-cell">
+                                <span class="date">{{ pred.created_at.strftime('%d %b %Y') }}</span>
+                                <span class="time">{{ pred.created_at.strftime('%H:%M') }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="scores-cell">
+                                <span class="score-badge" title="10th: {{ pred.tenth_percentage }}%">10th: {{ pred.tenth_percentage }}%</span>
+                                <span class="score-badge" title="12th: {{ pred.twelfth_percentage }}%">12th: {{ pred.twelfth_percentage }}%</span>
+                                <span class="score-badge" title="Degree: {{ pred.degree_percentage }}%">Deg: {{ pred.degree_percentage }}%</span>
+                                <span class="score-badge" title="MBA: {{ pred.mba_percentage }}%">MBA: {{ pred.mba_percentage }}%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge {% if pred.work_experience == 'Yes' %}bg-success{% else %}bg-secondary{% endif %}">
+                                {{ pred.work_experience }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="result-badge {{ 'placed' if pred.result == 'Placed' else 'not-placed' }}">
+                                <i class="bi bi-{{ 'check-circle' if pred.result == 'Placed' else 'x-circle' }}"></i>
+                                {{ pred.result }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="probability-cell">
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar {% if pred.probability >= 70 %}bg-success{% elif pred.probability >= 40 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                         style="width: {{ pred.probability }}%"></div>
+                                </div>
+                                <span class="probability-text">{{ pred.probability }}%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('result', prediction_id=pred.id) }}" class="btn btn-sm btn-primary view-btn">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="bi bi-inbox"></i>
+        </div>
+        <h4>No Predictions Yet</h4>
+        <p class="text-muted">You haven't made any placement predictions yet.</p>
+        <a href="{{ url_for('predict') }}" class="btn btn-primary btn-lg">
+            <i class="bi bi-magic"></i> Make Your First Prediction
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.history-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.history-header {
+    margin-bottom: 30px;
+}
+
+.history-header h2 {
+    color: #333;
+    font-weight: 600;
+}
+
+.btn-export {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-export:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+    color: white;
+}
+
+.history-stats {
+    margin-bottom: 30px;
+}
+
+.stat-box {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-5px);
+}
+
+.stat-box i {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.stat-box.total i { color: #667eea; }
+.stat-box.placed i { color: #28a745; }
+.stat-box.not-placed i { color: #dc3545; }
+.stat-box.avg i { color: #ffc107; }
+
+.stat-number {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+}
+
+.stat-text {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.history-table-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.history-table-card table {
+    margin: 0;
+}
+
+.history-table-card th {
+    background: #f8f9fa;
+    color: #667eea;
+    font-weight: 600;
+    border: none;
+    padding: 15px;
+}
+
+.history-table-card td {
+    padding: 15px;
+    vertical-align: middle;
+}
+
+.date-cell {
+    display: flex;
+    flex-direction: column;
+}
+
+.date-cell .date {
+    font-weight: 500;
+    color: #333;
+}
+
+.date-cell .time {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.scores-cell {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.score-badge {
+    background: #e9ecef;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    color: #555;
+}
+
+.result-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.result-badge.placed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.result-badge.not-placed {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.probability-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.probability-cell .progress {
+    flex: 1;
+    min-width: 60px;
+}
+
+.probability-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
+    min-width: 45px;
+}
+
+.view-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 8px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.empty-icon {
+    font-size: 80px;
+    color: #ddd;
+    margin-bottom: 20px;
+}
+
+.empty-state h4 {
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    margin-bottom: 25px;
+}
+
+.empty-state .btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+}
+</style>
+{% endblock %}

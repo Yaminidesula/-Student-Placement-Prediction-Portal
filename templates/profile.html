@@ -1,0 +1,357 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h2><i class="bi bi-person-circle"></i> My Profile</h2>
+        <p class="text-muted">Manage your account information</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    {% if user.profile_photo %}
+                        <img src="{{ url_for('static', filename='uploads/' + user.profile_photo) }}" alt="Profile Photo">
+                    {% else %}
+                        <i class="bi bi-person"></i>
+                    {% endif %}
+                </div>
+                <h4>{{ user.name }}</h4>
+                <p class="text-muted">{{ user.email }}</p>
+                <div class="role-badge-container">
+                    <span class="role-badge">
+                        <i class="bi bi-mortarboard"></i> {{ user.role or 'Student' }}
+                    </span>
+                </div>
+                <div class="student-info">
+                    {% if user.branch %}
+                    <span class="info-badge branch-badge">
+                        <i class="bi bi-building"></i> {{ user.branch }}
+                    </span>
+                    {% endif %}
+                    {% if user.roll_number %}
+                    <span class="info-badge roll-badge">
+                        <i class="bi bi-card-text"></i> {{ user.roll_number }}
+                    </span>
+                    {% endif %}
+                </div>
+                
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-value">{{ prediction_count }}</span>
+                        <span class="stat-label">Predictions</span>
+                    </div>
+                </div>
+                <p class="join-date">
+                    <i class="bi bi-calendar3"></i> 
+                    Member since {{ user.created_at.strftime('%B %Y') }}
+                </p>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="details-card">
+                <div class="card-header-custom">
+                    <h5><i class="bi bi-info-circle"></i> Account Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="bi bi-person"></i> Full Name
+                        </div>
+                        <div class="info-value">{{ user.name }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="bi bi-envelope"></i> Email Address
+                        </div>
+                        <div class="info-value">{{ user.email }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="bi bi-mortarboard"></i> Role
+                        </div>
+                        <div class="info-value">{{ user.role or 'Student' }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="bi bi-building"></i> Branch
+                        </div>
+                        <div class="info-value">{{ user.branch or 'Not specified' }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="bi bi-card-text"></i> Roll Number
+                        </div>
+                        <div class="info-value">{{ user.roll_number or 'Not specified' }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="bi bi-calendar"></i> Account Created
+                        </div>
+                        <div class="info-value">{{ user.created_at.strftime('%d %B %Y') }}</div>
+                    </div>
+                    <div class="info-row">
+                        <div class="info-label">
+                            <i class="bi bi-clock"></i> Last Updated
+                        </div>
+                        <div class="info-value">{{ user.updated_at.strftime('%d %B %Y at %H:%M') }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="details-card mt-4">
+                <div class="card-header-custom">
+                    <h5><i class="bi bi-lightning-charge"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{{ url_for('predict') }}" class="action-card">
+                                <i class="bi bi-magic"></i>
+                                <div>
+                                    <h6>Make Prediction</h6>
+                                    <p>Check your placement chances</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{{ url_for('history') }}" class="action-card">
+                                <i class="bi bi-clock-history"></i>
+                                <div>
+                                    <h6>View History</h6>
+                                    <p>See all your predictions</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.profile-header {
+    margin-bottom: 30px;
+}
+
+.profile-header h2 {
+    color: #333;
+    font-weight: 600;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.profile-avatar i {
+    font-size: 60px;
+    color: white;
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.student-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 15px 0;
+}
+
+.info-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.branch-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.roll-badge {
+    background: #e9ecef;
+    color: #555;
+}
+
+.role-badge-container {
+    margin: 10px 0;
+}
+
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+}
+
+.profile-card h4 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.profile-stats {
+    margin: 25px 0;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #667eea;
+}
+
+.stat-label {
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.join-date {
+    color: #888;
+    font-size: 0.9rem;
+    margin-top: 15px;
+}
+
+.join-date i {
+    margin-right: 5px;
+    color: #667eea;
+}
+
+.details-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.card-header-custom {
+    background: #f8f9fa;
+    padding: 20px 25px;
+    border-bottom: 1px solid #eee;
+}
+
+.card-header-custom h5 {
+    color: #667eea;
+    margin: 0;
+}
+
+.card-header-custom h5 i {
+    margin-right: 8px;
+}
+
+.details-card .card-body {
+    padding: 25px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.info-label i {
+    color: #667eea;
+}
+
+.info-value {
+    color: #333;
+    font-weight: 500;
+}
+
+.action-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+}
+
+.action-card:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    transform: translateY(-3px);
+}
+
+.action-card i {
+    font-size: 30px;
+    color: #667eea;
+}
+
+.action-card:hover i {
+    color: white;
+}
+
+.action-card h6 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.action-card p {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.action-card:hover p {
+    color: rgba(255, 255, 255, 0.8);
+}
+</style>
+{% endblock %}

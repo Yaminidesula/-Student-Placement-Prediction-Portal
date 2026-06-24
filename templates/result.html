@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Result - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="result-container">
+    <div class="result-header">
+        <h2><i class="bi bi-clipboard-check"></i> Prediction Result</h2>
+        <p class="text-muted">Here is your placement prediction analysis</p>
+    </div>
+
+    <!-- Main Result Card -->
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="result-card {% if prediction.result == 'Placed' %}placed{% else %}not-placed{% endif %}">
+                <div class="result-status">
+                    <div class="status-icon">
+                        {% if prediction.result == 'Placed' %}
+                            <i class="bi bi-check-circle-fill"></i>
+                        {% else %}
+                            <i class="bi bi-x-circle-fill"></i>
+                        {% endif %}
+                    </div>
+                    <h3 class="status-text">{{ prediction.result }}</h3>
+                    <p class="status-subtitle">
+                        {% if prediction.result == 'Placed' %}
+                            Congratulations! You are likely to get placed.
+                        {% else %}
+                            Keep improving! Work on your skills and academics.
+                        {% endif %}
+                    </p>
+                </div>
+
+                <!-- Probability Section -->
+                <div class="probability-section">
+                    <h5>Placement Probability</h5>
+                    <div class="progress-container">
+                        <div class="progress">
+                            <div class="progress-bar {% if prediction.probability >= 70 %}bg-success{% elif prediction.probability >= 40 %}bg-warning{% else %}bg-danger{% endif %}" 
+                                 role="progressbar" 
+                                 style="width: {{ prediction.probability }}%"
+                                 aria-valuenow="{{ prediction.probability }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                                {{ prediction.probability }}%
+                            </div>
+                        </div>
+                    </div>
+                    <p class="probability-text">
+                        {% if prediction.probability >= 70 %}
+                            <i class="bi bi-emoji-smile"></i> High chance of placement
+                        {% elif prediction.probability >= 40 %}
+                            <i class="bi bi-emoji-neutral"></i> Moderate chance - keep improving
+                        {% else %}
+                            <i class="bi bi-emoji-frown"></i> Low chance - focus on skill development
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Suggested Companies -->
+    <div class="row mt-4">
+        <div class="col-md-8 mx-auto">
+            <div class="companies-card">
+                <h5><i class="bi bi-building"></i> Suggested Companies</h5>
+                <p class="text-muted">Based on your profile, you may be eligible for:</p>
+                
+                <div class="companies-grid">
+                    {% for company in companies %}
+                    <div class="company-badge">
+                        <i class="bi bi-briefcase"></i>
+                        <span>{{ company }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input Summary -->
+    <div class="row mt-4">
+        <div class="col-md-8 mx-auto">
+            <div class="summary-card">
+                <h5><i class="bi bi-list-check"></i> Your Input Summary</h5>
+                <div class="table-responsive">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <td><i class="bi bi-gender-ambiguous"></i> Gender</td>
+                                <td class="text-end"><strong>{{ 'Male' if prediction.gender == 'M' else 'Female' }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-mortarboard"></i> 10th Percentage</td>
+                                <td class="text-end"><strong>{{ prediction.tenth_percentage }}%</strong></td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-mortarboard"></i> 12th Percentage</td>
+                                <td class="text-end"><strong>{{ prediction.twelfth_percentage }}%</strong></td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-mortarboard"></i> Degree Percentage</td>
+                                <td class="text-end"><strong>{{ prediction.degree_percentage }}%</strong></td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-mortarboard"></i> MBA Percentage</td>
+                                <td class="text-end"><strong>{{ prediction.mba_percentage }}%</strong></td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-briefcase"></i> Work Experience</td>
+                                <td class="text-end"><strong>{{ prediction.work_experience }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-building"></i> Specialization</td>
+                                <td class="text-end"><strong>{{ prediction.specialization }}</strong></td>
+                            </tr>
+                            <tr>
+                                <td><i class="bi bi-stars"></i> Skills</td>
+                                <td class="text-end"><strong>{{ prediction.skills }}</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-4 mb-5">
+        <div class="col-md-8 mx-auto text-center">
+            <a href="{{ url_for('predict') }}" class="btn btn-primary btn-lg me-3">
+                <i class="bi bi-arrow-repeat"></i> New Prediction
+            </a>
+            <a href="{{ url_for('history') }}" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-clock-history"></i> View History
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.result-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.result-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.result-header h2 {
+    color: #333;
+    font-weight: 600;
+}
+
+.result-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.result-card.placed {
+    border-top: 5px solid #28a745;
+}
+
+.result-card.not-placed {
+    border-top: 5px solid #dc3545;
+}
+
+.status-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+}
+
+.result-card.placed .status-icon {
+    color: #28a745;
+}
+
+.result-card.not-placed .status-icon {
+    color: #dc3545;
+}
+
+.status-text {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.result-card.placed .status-text {
+    color: #28a745;
+}
+
+.result-card.not-placed .status-text {
+    color: #dc3545;
+}
+
+.status-subtitle {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.probability-section {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #eee;
+}
+
+.probability-section h5 {
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.progress-container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.progress {
+    height: 30px;
+    border-radius: 15px;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 30px;
+    border-radius: 15px;
+}
+
+.probability-text {
+    margin-top: 15px;
+    font-size: 1.1rem;
+    color: #666;
+}
+
+.companies-card, .summary-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.companies-card h5, .summary-card h5 {
+    color: #667eea;
+    margin-bottom: 15px;
+}
+
+.companies-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.company-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    transition: transform 0.3s ease;
+}
+
+.company-badge:hover {
+    transform: translateY(-3px);
+}
+
+.summary-card table td {
+    padding: 12px 0;
+    color: #555;
+}
+
+.summary-card table td:first-child {
+    color: #888;
+}
+
+.summary-card table td i {
+    margin-right: 10px;
+    color: #667eea;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+}
+
+.btn-outline-primary {
+    border: 2px solid #667eea;
+    color: #667eea;
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-weight: 600;
+}
+
+.btn-outline-primary:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: transparent;
+}
+</style>
+{% endblock %}

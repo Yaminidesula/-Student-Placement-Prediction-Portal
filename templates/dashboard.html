@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="welcome-section">
+        <h2><i class="bi bi-emoji-smile"></i> Welcome, {{ user.name }}!</h2>
+        <p class="text-muted">Here's your placement prediction overview</p>
+    </div>
+    <div class="row stats-row">
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card primary">
+                <div class="stat-icon">
+                    <i class="bi bi-calculator"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ total_predictions }}</h3>
+                    <p>Total Predictions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card success">
+                <div class="stat-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ placed_count }}</h3>
+                    <p>Placed Predictions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card info">
+                <div class="stat-icon">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ placement_rate }}%</h3>
+                    <p>Placement Rate</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card warning">
+                <div class="stat-icon">
+                    <i class="bi bi-percent"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ avg_probability }}%</h3>
+                    <p>Avg Probability</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card quick-actions-card">
+                <div class="card-header">
+                    <h5><i class="bi bi-lightning-charge"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <a href="{{ url_for('predict') }}" class="action-btn">
+                                <div class="action-icon bg-primary">
+                                    <i class="bi bi-magic"></i>
+                                </div>
+                                <div class="action-text">
+                                    <h6>New Prediction</h6>
+                                    <p>Predict your placement chances</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{{ url_for('history') }}" class="action-btn">
+                                <div class="action-icon bg-success">
+                                    <i class="bi bi-clock-history"></i>
+                                </div>
+                                <div class="action-text">
+                                    <h6>View History</h6>
+                                    <p>See your past predictions</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card tips-card">
+                <div class="card-header">
+                    <h5><i class="bi bi-lightbulb"></i> Tips</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="tips-list">
+                        <li><i class="bi bi-check2"></i> Keep your academic scores high</li>
+                        <li><i class="bi bi-check2"></i> Gain relevant work experience</li>
+                        <li><i class="bi bi-check2"></i> Learn in-demand skills</li>
+                        <li><i class="bi bi-check2"></i> Practice for interviews</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card about-card">
+                <div class="card-header">
+                    <h5><i class="bi bi-info-circle"></i> About the Prediction System</h5>
+                </div>
+                <div class="card-body">
+                    <p>This portal uses <strong>Machine Learning</strong> (Logistic Regression) to predict your placement chances based on:</p>
+                    <div class="row mt-3">
+                        <div class="col-md-3 col-sm-6">
+                            <div class="feature-item">
+                                <i class="bi bi-mortarboard"></i>
+                                <span>Academic Scores</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="feature-item">
+                                <i class="bi bi-briefcase"></i>
+                                <span>Work Experience</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="feature-item">
+                                <i class="bi bi-stars"></i>
+                                <span>Skills</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="feature-item">
+                                <i class="bi bi-building"></i>
+                                <span>Specialization</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

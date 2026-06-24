@@ -1,0 +1,226 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Form - {{ app_name }}{% endblock %}
+
+{% block content %}
+<div class="prediction-form-container">
+    <div class="form-header">
+        <h2><i class="bi bi-magic"></i> Placement Prediction</h2>
+        <p class="text-muted">Enter your details to predict your placement chances</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('predict') }}" class="prediction-form">
+        <div class="row">
+            <!-- Personal Information -->
+            <div class="col-md-6">
+                <div class="form-section">
+                    <h5><i class="bi bi-person"></i> Personal Information</h5>
+                    
+                    <div class="mb-3">
+                        <label for="gender" class="form-label">Gender</label>
+                        <select class="form-select" id="gender" name="gender" required>
+                            <option value="" selected disabled>Select Gender</option>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="workex" class="form-label">Work Experience</label>
+                        <select class="form-select" id="workex" name="workex" required>
+                            <option value="" selected disabled>Select Work Experience</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="specialisation" class="form-label">Specialization</label>
+                        <select class="form-select" id="specialisation" name="specialisation" required>
+                            <option value="" selected disabled>Select Specialization</option>
+                            <option value="Mkt&HR">Marketing & HR</option>
+                            <option value="Mkt&Fin">Marketing & Finance</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Scores -->
+            <div class="col-md-6">
+                <div class="form-section">
+                    <h5><i class="bi bi-mortarboard"></i> Academic Scores</h5>
+                    
+                    <div class="mb-3">
+                        <label for="ssc_p" class="form-label">10th Percentage (%)</label>
+                        <input type="number" 
+                               class="form-control" 
+                               id="ssc_p" 
+                               name="ssc_p" 
+                               min="0" 
+                               max="100" 
+                               step="0.01"
+                               placeholder="e.g., 85.50"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="hsc_p" class="form-label">12th Percentage (%)</label>
+                        <input type="number" 
+                               class="form-control" 
+                               id="hsc_p" 
+                               name="hsc_p" 
+                               min="0" 
+                               max="100" 
+                               step="0.01"
+                               placeholder="e.g., 78.25"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="degree_p" class="form-label">Degree Percentage (%)</label>
+                        <input type="number" 
+                               class="form-control" 
+                               id="degree_p" 
+                               name="degree_p" 
+                               min="0" 
+                               max="100" 
+                               step="0.01"
+                               placeholder="e.g., 72.00"
+                               required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="mba_p" class="form-label">MBA Percentage (%)</label>
+                        <input type="number" 
+                               class="form-control" 
+                               id="mba_p" 
+                               name="mba_p" 
+                               min="0" 
+                               max="100" 
+                               step="0.01"
+                               placeholder="e.g., 68.50"
+                               required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Skills Section -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="form-section">
+                    <h5><i class="bi bi-stars"></i> Skills</h5>
+                    <div class="mb-3">
+                        <label for="skills" class="form-label">Enter your skills (comma separated)</label>
+                        <textarea class="form-control" 
+                                  id="skills" 
+                                  name="skills" 
+                                  rows="3"
+                                  placeholder="e.g., Python, Java, SQL, Communication, Leadership"
+                                  required></textarea>
+                        <div class="form-text">Example: Python, Java, SQL, Excel, Communication, Leadership, Analytics</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-primary btn-lg predict-btn">
+                    <i class="bi bi-magic"></i> Predict Placement
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+.prediction-form-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-header h2 {
+    color: #333;
+    font-weight: 600;
+}
+
+.form-section {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.form-section h5 {
+    color: #667eea;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.form-section h5 i {
+    margin-right: 8px;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #555;
+}
+
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 2px solid #e0e0e0;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.predict-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 15px 50px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.predict-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+}
+
+.form-text {
+    color: #888;
+    font-size: 0.85rem;
+}
+</style>
+
+<script>
+// Form validation
+document.querySelector('.prediction-form').addEventListener('submit', function(e) {
+    const ssc_p = parseFloat(document.getElementById('ssc_p').value);
+    const hsc_p = parseFloat(document.getElementById('hsc_p').value);
+    const degree_p = parseFloat(document.getElementById('degree_p').value);
+    const mba_p = parseFloat(document.getElementById('mba_p').value);
+    
+    if (ssc_p < 0 || ssc_p > 100 || hsc_p < 0 || hsc_p > 100 || 
+        degree_p < 0 || degree_p > 100 || mba_p < 0 || mba_p > 100) {
+        e.preventDefault();
+        alert('All percentages must be between 0 and 100');
+    }
+});
+</script>
+{% endblock %}
